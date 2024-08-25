@@ -1,0 +1,73 @@
+USE Health_Services
+BULK INSERT  Appointment
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Appointment.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Doctor
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Doctor.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Insurance
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Insurance.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  MedicalRecord
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\MedicalRecord.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Nurse
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Nurse.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Patient
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Patient.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Bill
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Bill.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  Service
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\Service.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
+BULK INSERT  ServiceType
+	FROM 'C:\Users\ADMIN\OneDrive\Document\C? s? d? li?u\Final Project\UT-16 LE-20240617T211811Z-001\UT-16 LE\ServiceType.csv'
+	WITH 
+	(FORMAT = 'CSV',
+	FIRSTROW = 2,
+	FIELDTERMINATOR = ',',
+	ROWTERMINATOR ='\n'
+	);
