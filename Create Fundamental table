@@ -1,0 +1,100 @@
+CREATE DATABASE Health_Services
+
+USE Health_Services
+
+
+-- Create table ServiceType
+CREATE TABLE ServiceType (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    main_type NVARCHAR(255)
+);
+
+-- Create table Service
+CREATE TABLE Service (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    price DECIMAL(10, 2),
+    servicetype_id INT,
+    FOREIGN KEY (servicetype_id) REFERENCES ServiceType(id)
+);
+
+-- Create table Doctor
+CREATE TABLE Doctor (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    speciality NVARCHAR(255),
+    position NVARCHAR(255),
+    contact NVARCHAR(255)
+);
+
+-- Create table Nurse
+CREATE TABLE Nurse (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    contact NVARCHAR(255)
+);
+
+-- Create table Patient
+CREATE TABLE Patient (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    dob DATE,
+    gender NVARCHAR(10),
+    address NVARCHAR(255),
+    contact NVARCHAR(255),
+    nurse_id INT,
+	insurance_id INT,
+    FOREIGN KEY (nurse_id) REFERENCES Nurse(id),
+	FOREIGN KEY (insurance_id) REFERENCES Insurance(id)
+);
+
+-- Create table Appointment
+CREATE TABLE Appointment (
+    id INT PRIMARY KEY,
+    Note NVARCHAR(255),
+    Date DATE,
+    time TIME,
+    patient_id INT,
+    doctor_id INT,
+    FOREIGN KEY (patient_id) REFERENCES Patient(id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctor(id)
+);
+
+-- Create table Medical Record
+CREATE TABLE MedicalRecord (
+    id INT PRIMARY KEY,
+    patient_disease NVARCHAR(255),
+    doctor_recommendation NVARCHAR(255),
+    doctor_id INT,
+    patient_id INT,
+    service_id INT,
+    FOREIGN KEY (doctor_id) REFERENCES Doctor(id),
+    FOREIGN KEY (patient_id) REFERENCES Patient(id),
+    FOREIGN KEY (service_id) REFERENCES Service(id)
+);
+
+-- Create table Insurance
+CREATE TABLE Insurance (
+    id INT PRIMARY KEY,
+    name NVARCHAR(255),
+    type_of_insurance NVARCHAR(255),
+    discount_rate Decimal(10,2)
+);
+
+-- Create table Bill
+CREATE TABLE Bill (
+    id INT PRIMARY KEY,
+    pay_date DATE,
+    quantity_service INT,
+    total_price DECIMAL(10, 2),
+    record_id INT,
+    patient_id INT,
+    insurance_id INT,
+    service_id INT,
+    FOREIGN KEY (record_id) REFERENCES MedicalRecord(id),
+    FOREIGN KEY (patient_id) REFERENCES Patient(id),
+    FOREIGN KEY (insurance_id) REFERENCES Insurance(id),
+    FOREIGN KEY (service_id) REFERENCES Service(id)
+);
+
