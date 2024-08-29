@@ -1,0 +1,126 @@
+USE Health_Services
+
+--1Get the list of morning and afternoon appointments in detail to define popular times of the day therefore assign more nurses and doctors ready to assist.
+SELECT 
+    CASE 
+        WHEN Appointment.time BETWEEN '08:00:00' AND '11:59:59' THEN 'Morning'
+        WHEN Appointment.time BETWEEN '12:00:00' AND '16:59:59' THEN 'Afternoon'
+    END AS appointment_period,
+    Appointment.id AS appointment_id,
+    Appointment.Note AS note,
+    Appointment.Date AS date,
+    Appointment.time AS time,
+    Patient.name AS patient_name,
+    Doctor.name AS doctor_name,
+    COUNT(Appointment.id) OVER (PARTITION BY 
+        CASE 
+            WHEN Appointment.time BETWEEN '08:00:00' AND '11:59:59' THEN 'Morning'
+            WHEN Appointment.time BETWEEN '12:00:00' AND '16:59:59' THEN 'Afternoon'
+        END
+    ) AS appointment_count
+FROM 
+    Appointment
+JOIN 
+    Patient ON Appointment.patient_id = Patient.id
+JOIN 
+    Doctor ON Appointment.doctor_id = Doctor.id
+ORDER BY 
+    appointment_period, Appointment.time;
+
+--2Show the info of the doctor who is in charge of most appointments to define their popularity and give reward by the end of the year
+SELECT TOP 1
+    Doctor.id AS doctor_id,
+    Doctor.name AS doctor_name,
+    Doctor.speciality AS speciality,
+    Doctor.position AS position,
+    Doctor.contact AS contact,
+    COUNT(Appointment.id) AS appointment_count
+FROM 
+    Doctor
+JOIN 
+    Appointment ON Doctor.id = Appointment.doctor_id
+GROUP BY 
+    Doctor.id, Doctor.name, Doctor.speciality, Doctor.position, Doctor.contact
+ORDER BY 
+    appointment_count DESC
+
+
+--3Calculate Total_price for a patient based on the service used
+SELECT p.name AS patient_name, 
+       SUM(s.price * b.quantity_service) AS total_price
+FROM Patient p
+INNER JOIN MedicalRecord mr ON p.id = mr.patient_id
+INNER JOIN Bill b ON mr.id = b.record_id
+INNER JOIN Service s ON b.service_id = s.id
+GROUP BY p.name
+ORDER BY total_price DESC;
+
+
+--4What is the total revenue generated from services provided in the last month?
+SELECT SUM(b.total_price) AS total_revenue
+FROM Bill b
+WHERE b.pay_date >= DATEADD(month, -1, GETDATE())
+  AND b.pay_date <= GETDATE();
+
+--5Which services generate the highest revenue?
+SELECT Service.name, SUM(Bill.total_price) AS total_revenue
+FROM Service
+JOIN Bill ON Service.id = Bill.service_id
+GROUP BY Service.name
+ORDER BY total_revenue DESC;
+
+--6Which doctors are generating the most revenue for the clinic, and what are their specialties?
+SELECT d.name AS doctor_name, speciality, 
+       SUM(total_price) AS total_revenue
+FROM Doctor d
+INNER JOIN MedicalRecord mr ON d.id = mr.doctor_id 
+INNER JOIN Bill b ON mr.id = b.record_id
+INNER JOIN Service s ON b.service_id = s.id
+GROUP BY d.name, d.speciality
+ORDER BY total_revenue DESC;
+
+--7Are there any services that are under-utilized (low quantity used) but have a high price, potentially indicating a pricing strategy that needs adjustment?
+SELECT s.name AS service_name, 
+       s.price AS price, 
+       SUM(b.quantity_service) AS quantity_used
+FROM Service s
+INNER JOIN Bill b ON b.service_id = s.id
+GROUP BY s.name, s.price
+HAVING SUM(b.quantity_service) < (SELECT AVG(quantity_service) FROM Bill)  -- Adjust threshold as needed
+ORDER BY price DESC;
+
+--8What is the average discount rate given by each type of insurance?
+SELECT i.type_of_insurance, 
+       AVG(i.discount_rate) AS average_discount
+FROM Insurance i
+GROUP BY i.type_of_insurance;
+
+--9Which doctors have the most booked appointments in the last quarter, and what are their specialities?
+SELECT d.name AS doctor_name, 
+       d.speciality, 
+       COUNT(*) AS num_appointments
+FROM Doctor d
+INNER JOIN Appointment a ON d.id = a.doctor_id
+INNER JOIN MedicalRecord mr ON a.patient_id = mr.patient_id
+INNER JOIN Service s ON mr.service_id = s.id
+WHERE a.Date >= DATEADD(month, -3, GETDATE())  -- Adjust timeframe as needed
+  AND a.Date <= GETDATE()
+GROUP BY d.name, d.speciality
+ORDER BY num_appointments DESC;
+
+--10Are there any patients who frequently visit the clinic (high number of appointments) and have a high average bill amount per visit? Identifying such patients could help target high-value patients for loyalty programs or special offers.
+WITH PatientVisits AS (
+  SELECT p.id AS patient_id, 
+         COUNT(*) AS num_appointments, 
+         AVG(b.total_price) AS avg_bill_amount
+  FROM Patient p
+  INNER JOIN Appointment a ON p.id = a.patient_id
+  INNER JOIN MedicalRecord mr ON a.patient_id = mr.patient_id
+  INNER JOIN Bill b ON mr.id = b.record_id
+  GROUP BY p.id
+)
+SELECT patient_id, num_appointments, avg_bill_amount
+FROM PatientVisits
+WHERE num_appointments > (SELECT AVG(num_appointments) FROM PatientVisits)  -- Adjust threshold as needed
+  AND avg_bill_amount > (SELECT AVG(avg_bill_amount) FROM PatientVisits);  -- Adjust threshold as needed
+
