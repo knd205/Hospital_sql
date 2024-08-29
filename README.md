@@ -1,4 +1,4 @@
-![HNMUH-Trang-3 drawio](https://github.com/user-attachments/assets/8fe56714-b49a-430c-8245-61b436c13a61)Hanoi Medical University Hospital Management System Project
+Hanoi Medical University Hospital Management System Project
 
 The objective of this project is to provide recommendations for how a comprehensive database system can help nurses and doctors better manage patient flow. By collecting operational data and examining the inefficiencies and gaps that arise from the absence of a standardized database, this analysis will use entity-relationship diagrams (ERDs) and relational models to provide a visual representation of the problem. The data will then be imported into a database using SQLServer, allowing for enhanced problem depiction and highlighting the critical need for hospitals to adopt robust digital tools for patient management.
 
